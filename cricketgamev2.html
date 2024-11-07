@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Howzat!</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background-color: #4CAF50; /* Cricket field green background */
+      color: #fff; /* White text for contrast */
+    }
+    .title-image {
+      max-width: 50%;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .blanks {
+      font-size: 2em;
+      letter-spacing: 10px;
+      white-space: pre;
+      background-color: #006400; /* Dark green for cricket pitch effect */
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+      display: inline-block;
+    }
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .input-area {
+      margin-top: 20px;
+    }
+    .box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 70px;
+      border: 2px solid #FFD700; /* Golden borders for boxes */
+      margin: 5px;
+      font-size: 1.5em;
+      vertical-align: middle;
+      text-align: center;
+      box-sizing: border-box;
+      background-color: #fff; /* White background for letter boxes */
+      color: #000; /* Black text */
+      border-radius: 5px;
+    }
+    .line-break {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .keyboard {
+      margin-top: 30px;
+    }
+    .key {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1.2em;
+      cursor: pointer;
+      border: 2px solid #333;
+      background-color: #FFD700; /* Golden buttons for keyboard */
+      color: #000;
+      user-select: none;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.2s;
+      font-family: 'Poppins', sans-serif;
+    }
+    .key:hover {
+      background-color: #FFA500; /* Orange hover effect */
+      transform: scale(1.1);
+    }
+    .key:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #remaining-wickets {
+      margin-top: 20px;
+      font-size: 1.5em;
+      color: #fff;
+      background-color: #ff0000; /* Red color for cricket ball */
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 20px;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <img src="howzat.jpeg" alt="Howzat!" class="title-image"><br>
+  <div class="instructions" style="font-size: 1.5em; color: #FFD700; margin-bottom: 20px;">Guess the name of the England test cricketer. You can only guess wrong ten times!</div>
+  <div id="blanks" class="blanks"></div>
+  <div class="message" id="message"></div>
+  <div class="instructions" style="font-size: 1.5em; color: #FFD700; display: inline-block; margin-right: 10px;">Remaining wickets:</div>
+  <div id="remaining-wickets">10</div>
+  <div class="keyboard" id="keyboard"></div>
+
+  <script>
+    // Array of England Test cricketers
+    const cricketers = ["Joe Root", "Ben Stokes", "James Anderson", "Alastair Cook", "Ian Bell", "Ian Botham", "David Gower", "Mike Gatting", "Graham Gooch", "Allan Lamb", "Chris Broad", "Derek Pringle", "Robin Smith", "Alec Stewart", "Michael Atherton", "Graeme Hick", "Nasser Hussain", "Mark Ramprakash", "Darren Gough", "Andrew Caddick", "Marcus Trescothick", "Andrew Flintoff", "Steve Harmison", "Kevin Pietersen", "Matthew Hoggard", "Paul Collingwood", "Alastair Cook", "James Anderson", "Stuart Broad", "Ian Bell", "Monty Panesar", "Jonathan Trott", "Graeme Swann", "Joe Root", "Ben Stokes", "Jos Buttler", "Moeen Ali", "Chris Woakes", "Jonny Bairstow", "Sam Curran", "Dom Sibley", "Zak Crawley", "Ollie Pope", "Jofra Archer", "Jack Leach", "Dom Bess", "Rory Burns", "Mark Wood", "Ollie Robinson", "Dan Lawrence", "Haseeb Hameed", "Ben Foakes", "Rehan Ahmed", "Harry Brook", "Matthew Potts"];
+
+    // Select a random cricketer
+    const selectedCricketer = cricketers[Math.floor(Math.random() * cricketers.length)].toUpperCase();
+    const cricketerBlanks = selectedCricketer.replace(/[A-Z]/g, "_");
+    
+    let currentGuess = cricketerBlanks.split("");
+    let remainingWickets = 10;
+    const guessedLetters = [];
+
+    // Display initial blanks
+    displayBlanks();
+    createKeyboard();
+
+    function displayBlanks() {
+      const blanksContainer = document.getElementById("blanks");
+      blanksContainer.innerHTML = "";
+      const names = selectedCricketer.split(" ");
+      names.forEach((name, index) => {
+        name.split("").forEach((char, i) => {
+          const box = document.createElement("div");
+          box.className = "box";
+          box.innerText = currentGuess[i + (index === 1 ? names[0].length + 1 : 0)] === "_" ? "" : currentGuess[i + (index === 1 ? names[0].length + 1 : 0)];
+          blanksContainer.appendChild(box);
+        });
+        if (index < names.length - 1) {
+          const lineBreak = document.createElement("div");
+          lineBreak.className = "line-break";
+          blanksContainer.appendChild(lineBreak);
+        }
+      });
+    }
+
+    function createKeyboard() {
+      const keyboardContainer = document.getElementById("keyboard");
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      letters.split("").forEach(letter => {
+        const keyButton = document.createElement("button");
+        keyButton.className = "key";
+        keyButton.innerText = letter;
+        keyButton.onclick = () => makeGuess(letter, keyButton);
+        keyboardContainer.appendChild(keyButton);
+      });
+    }
+
+    function makeGuess(letterInput, keyButton) {
+      if (guessedLetters.includes(letterInput)) {
+        document.getElementById("message").innerText = "You already guessed that letter.";
+        return;
+      }
+
+      guessedLetters.push(letterInput);
+      keyButton.disabled = true;
+
+      // Check if letter is in the selected cricketer's name
+      if (selectedCricketer.includes(letterInput)) {
+        for (let i = 0; i < selectedCricketer.length; i++) {
+          if (selectedCricketer[i] === letterInput) {
+            currentGuess[i] = letterInput;
+          }
+        }
+      } else {
+        remainingWickets--;
+      }
+
+      // Update the UI
+      displayBlanks();
+      document.getElementById("remaining-wickets").innerText = `${remainingWickets}`;
+
+      // Check for win or lose
+      if (!currentGuess.includes("_")) {
+        document.getElementById("message").innerText = `Well done! You found ${selectedCricketer} with ${remainingWickets} wickets remaining.`;
+        disableInput();
+      } else if (remainingWickets === 0) {
+        document.getElementById("message").innerText = `You lost! The cricketer was: ${selectedCricketer}`;
+        disableInput();
+      }
+    }
+
+    function disableInput() {
+      const keys = document.querySelectorAll(".key");
+      keys.forEach(key => key.disabled = true);
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
